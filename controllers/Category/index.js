@@ -16,7 +16,7 @@ const createMasterCategory = (req, res, next) => {
     // check if category with given name already exists
     connection.query(checkQuery, checkValues, function (err, result) {
         if (err) {
-            return res.status(400).json({ message: 'check the values something went wrong' });
+            return res.status(500).json({ message: 'check the values something went wrong' });
         } else if (result[0].count > 0) {
             return res.status(400).json({ message: 'Category with given name already exists' });
         } else {
@@ -33,7 +33,7 @@ const createMasterCategory = (req, res, next) => {
 
             connection.query(query, values, function (err) {
                 if (err) {
-                    return res.status(400).json({ message: 'something went wrong' });
+                    return res.status(500).json({ message: 'something went wrong' });
                 } else {
                     return res.status(200).json({ message: 'Created' });
                 }
