@@ -64,7 +64,6 @@ const login = (req, res, next) => {
     // checking email
     connection.query(checkQuery, checkValues, async (err, result) => {
         if (err) {
-            console.log(err, '======');
             return res.status(500).json({ message: 'check the values something went wrong' });
         } else if (result.length === 0) {
             // if email not exist
