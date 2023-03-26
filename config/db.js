@@ -13,13 +13,15 @@ const createConnectionPool = async () => {
     idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
     queueLimit: 0
   });
+  
 
   // now get a Promise wrapped instance of that pool
-  promisePool = pool.promise();
+  // promisePool = pool.promise();
   // query database using promises
 
   try {
-    const [rows, fields] = await promisePool.query("SELECT 1");
+    const [rows, fields] = await pool.query("SELECT 1");
+    console.log('Connceted to db')
   } catch (error) {
     console.error(error)
     process.exit(1)
@@ -27,7 +29,7 @@ const createConnectionPool = async () => {
 }
 
 const getPool = () => {
-  return { pool, pool$: pool.promise() }
+  return { pool }
 }
 
 module.exports = { getPool, createConnectionPool }

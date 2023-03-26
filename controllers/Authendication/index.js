@@ -1,3 +1,4 @@
+const { getPool } = require("../../config/db");
 const { verify, hash } = require("../../services/password");
 const { generate } = require("../../services/token");
 
@@ -5,7 +6,7 @@ const { generate } = require("../../services/token");
 // creating new user sign up
 const createUser = async (req, res, next) => {
     try {
-        const { pool$ } = getPool();
+        const { pool } = getPool();
         var { fName, lName, email, password } = req.body;
         // query to check email
         const checkQuery = `
@@ -15,7 +16,7 @@ const createUser = async (req, res, next) => {
       `;
         const checkValues = [email];
         // checking email already exist
-        const result = await pool$.query(checkQuery, checkValues)
+        const [result] = await pool.query(checkQuery, checkValues)
         if (result[0].count > 0) return res.status(400).json({ message: 'Email already exists' });
         password = await hash(req.body.password);
 
@@ -28,7 +29,7 @@ const createUser = async (req, res, next) => {
        )
      `;
         const values = [fName, lName, email, password, 1, 3];
-        await pool$.query(query, values,);
+        await pool.query(query, values,);
         res.status(200).json({ message: 'Created' });
     } catch (error) {
         next(error)
@@ -41,7 +42,7 @@ const createUser = async (req, res, next) => {
 const login = async (req, res, next) => {
 
     try {
-        const { pool$ } = getPool();
+        const { pool } = getPool();
         const { email, password } = req.body;
 
 
@@ -56,7 +57,7 @@ const login = async (req, res, next) => {
     where email = ?
     `;
         const checkValues = [email];
-        const doc = await pool$.query(checkQuery, checkValues);
+        const [doc] = await pool.query(checkQuery, checkValues);
         // if email not exist
         if (doc.length === 0) return res.status(400).json({ message: 'Email not exists' });
         const result = doc[0];

@@ -12,6 +12,7 @@ app.use(express.json());
 app.use(cors());
 require('./routes/index')(app);
 app.use((error, req, res, next) => {
+  console.log(error);
   return res.status(400).json({ error: error, message: 'something went wrong', status: 400 });
 })
 

@@ -1,8 +1,9 @@
+const { getPool } = require("../../config/db");
 
 // create new category
 const createMasterCategory = async (req, res, next) => {
     try {
-        const { pool$ } = getPool();
+        const { pool } = getPool();
         const { name, status_id, banner_img, created_by, last_updated_by } = req.body;
 
         // perform input validation here
@@ -13,7 +14,7 @@ const createMasterCategory = async (req, res, next) => {
     `;
         // checking category name alreasy exist
         const checkValues = [name];
-        const [result] = await pool$.query(checkQuery, checkValues);
+        const [result] = await pool.query(checkQuery, checkValues);
         if (result[0].count > 0) return res.status(400).json({ message: 'Category with given name already exists' });
 
         // create new category
@@ -27,7 +28,7 @@ const createMasterCategory = async (req, res, next) => {
 
       `;
         const values = [name, status_id, banner_img, created_by, last_updated_by];
-        await pool$.query(query, values);
+        await pool.query(query, values);
         res.status(200).json({ message: 'Created' });
     } catch (error) {
         next(error);
@@ -39,14 +40,14 @@ const createMasterCategory = async (req, res, next) => {
 // get api for category
 const getAllMasterCategories = async (req, res, next) => {
     try {
-        const { pool$ } = getPool();
+        const { pool } = getPool();
         const query = `
     SELECT mc.name, mc.banner_img, ms.name as status
     FROM master_category mc
     INNER JOIN master_status ms
     ON ms.id = mc.status_id
     `;
-        const [result] = await pool$.query(query);
+        const [result] = await pool.query(query);
         res.status(200).json({ data: result });
     } catch (error) {
         next(error)
@@ -59,7 +60,7 @@ const getAllMasterCategories = async (req, res, next) => {
 const getMasterCategoryById = async (req, res, next) => {
 
     try {
-        const { pool$ } = getPool();
+        const { pool } = getPool();
         const { id } = req.params;
         // retrieve category details by id
         const query = `
@@ -69,7 +70,7 @@ const getMasterCategoryById = async (req, res, next) => {
           ON ms.id = mc.status_id where mc.id = ?
           `;
         const values = [id];
-        const [result] = await pool$.query(query, values);
+        const [result] = await pool.query(query, values);
         if (result.length === 0) {
             return res.status(404).json({ message: 'Category not found' });
         }
@@ -84,7 +85,7 @@ const updateMasterCategory = async (req, res, next) => {
 
 
     try {
-        const { pool$ } = getPool();
+        const { pool } = getPool();
         const { name, status_id, banner_img } = req.body;
         const { id } = req.params;
         const values = [];
@@ -117,7 +118,7 @@ const updateMasterCategory = async (req, res, next) => {
             SET ${setClause}, last_updated_on = NOW()
             WHERE id = ?
         `;
-        await pool$.query(query, values);
+        await pool.query(query, values);
         res.status(200).json({ message: 'Updated' });
     } catch (error) {
         next(error);
