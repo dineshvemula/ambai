@@ -3,7 +3,7 @@
 const jwt = require('jsonwebtoken');
 
 
-const tokenExpirePeriod = '3d';
+const tokenExpirePeriod = '1d';
 const jwtSecret = process.env.JWT_SECRET;
 
 async function generateToken(payLoad, expiresIn = tokenExpirePeriod) {
