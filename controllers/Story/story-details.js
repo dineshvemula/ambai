@@ -23,7 +23,7 @@ const createStoryDetails = async (req, res, next) => {
 const getStoryDetails = async (req, res, next) => {
     try {
         const { pool } = getPool();
-        const query = `SELECT *, st.name as story_name, se.name as episode_name
+        const query = `SELECT sd.*, st.name as story_name, se.name as episode_name
         FROM story_details sd 
         INNER JOIN story st 
         ON st.id = sd.story_id

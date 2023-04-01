@@ -4,7 +4,8 @@ const { getPool } = require("../../config/db");
 const createMasterCategory = async (req, res, next) => {
     try {
         const { pool } = getPool();
-        const { name, status_id, banner_img, created_by, last_updated_by } = req.body;
+        const { name, status_id, banner_img } = req.body;
+        const user_id = req?.user?.id;
 
         // perform input validation here
         const checkQuery = `
@@ -27,7 +28,7 @@ const createMasterCategory = async (req, res, next) => {
         )
 
       `;
-        const values = [name, status_id, banner_img, created_by, last_updated_by];
+        const values = [name, status_id, banner_img, user_id, user_id];
         await pool.query(query, values);
         res.status(200).json({ message: 'Created' });
     } catch (error) {

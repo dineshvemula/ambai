@@ -3,15 +3,16 @@
 const express = require('express');
 
 const storyCtrl = require('../controllers/Story');
+const { checkToken } = require("../services/auth");
 
 const router = express.Router();
 
 router.route('/')
 
     // create story
-    .post(storyCtrl.createStory)
-    .get(storyCtrl.getStories)
+    .post(checkToken, storyCtrl.createStory)
+    .get(checkToken, storyCtrl.getStories)
 router.route('/:id')
-    .get(storyCtrl.getStories)
+    .get(checkToken, storyCtrl.getStories)
 
 module.exports = router;
