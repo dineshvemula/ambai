@@ -25,6 +25,7 @@ const createStory = async (req, res, next) => {
   }
 
 };
+
 // get stories list
 const getStories = async (req, res, next) => {
   try {

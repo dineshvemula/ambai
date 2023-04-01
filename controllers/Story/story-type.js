@@ -10,7 +10,7 @@ const createStoryType = async (req, res, next) => {
 
         const checkQuery = `SELECT COUNT(*) as count
                             FROM story_types
-                            WHERE name = ? `
+                            WHERE name = ?`
 
         const checkValue = [name];
         // checking name alreaady exist
