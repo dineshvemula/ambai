@@ -10,5 +10,8 @@ router.route('/')
 
     // create story
     .post(storyCtrl.createStory)
+    .get(storyCtrl.getStories)
+router.route('/:id')
+    .get(storyCtrl.getStories)
 
 module.exports = router;

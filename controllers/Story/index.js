@@ -18,7 +18,7 @@ const createStory = async (req, res, next) => {
     `;
     const values = [user_id, name, title, banner_img, logo_img, category_id, story_type_id, status_id, created_by, last_updated_by];
 
-    const data = await pool.query(query, values);
+    await pool.query(query, values);
     return res.status(200).json({ message: 'Created', status: 200 })
   } catch (error) {
     next(error);
@@ -37,17 +37,23 @@ const getStories = async (req, res, next) => {
                     INNER JOIN master_category mc
                     ON mc.id = sc.category_id
                     INNER JOINT users ur
-                    ON ur.id = sc.user_id`;
-    const result = await pool.query(query);
+                    ON ur.id = sc.user_id
+                    WHERE 1 = 1`;
+
+    // checking if any filters existing
+    const filterKeys = Object.keys(req.params);
+    if (filterKeys.length > 0) {
+      filterKeys.forEach((key) => {
+        query += ` AND ${key} = '${req.params[key]}'`;
+      });
+    };
+
+    const [result] = await pool.query(query);
     res.status(200).json({ message: 'success', data: result, status: 200 });
   } catch (error) {
     next(error);
   }
 };
-
-
-
-
 
 
 module.exports = { createStory, getStories }
