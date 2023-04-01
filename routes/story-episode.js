@@ -11,7 +11,7 @@ const router = express.Router();
 router.route('/')
     .post(checkToken, storyEpisodeCtrl.createEpisode)
 
-router.route('/:story_id/:episode_no')
+router.route('/:story_id')
     .get(checkToken, storyEpisodeCtrl.getEpisodes)
 
 module.exports = router;

@@ -56,4 +56,28 @@ const getStories = async (req, res, next) => {
 };
 
 
-module.exports = { createStory, getStories }
+const getStoryById = async (req, res, next) => {
+  try {
+    const { pool } = getPool();
+    const { id } = req.params;
+
+    // checking story exist or not
+    const query = `SELECT * FROM story WHERE id = ?`;
+    const [data] = await pool.query(query, [id]);
+    if (!data.length) return res.status(404).json({ message: 'Story not found', status: 404 });
+    const story = data[0];
+    // getting episodes related to story
+    const episodesQuery = `
+    SELECT *
+    FROM story_episode
+    WHERE story_id = ?
+  `;
+    const [episodes] = await pool.query(episodesQuery, [id]);
+    story.episodes = episodes;
+    res.status(200).json({ message: 'success', result: story, status: 200 })
+  } catch (error) {
+    next(error)
+  }
+}
+
+module.exports = { createStory, getStories, getStoryById }

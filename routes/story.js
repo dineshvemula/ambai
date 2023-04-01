@@ -13,6 +13,6 @@ router.route('/')
     .post(checkToken, storyCtrl.createStory)
     .get(checkToken, storyCtrl.getStories)
 router.route('/:id')
-    .get(checkToken, storyCtrl.getStories)
+    .get(checkToken, storyCtrl.getStoryById)
 
 module.exports = router;

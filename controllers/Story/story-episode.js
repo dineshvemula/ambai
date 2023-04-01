@@ -18,8 +18,7 @@ const createEpisode = async (req, res, next) => {
                             WHERE episode_no = ?
                             AND story_id = ?`;
         const checkValues = [episode_no, story_id];
-        const doc = await pool.query(checkQuery, checkValues);
-
+        const [doc] = await pool.query(checkQuery, checkValues);
         if (doc[0].count > 0) return res.status(400).json({ message: `Episode ${episode_no} is alreay exist for this story` });
         // creating new episode
         const query = `INSERT INTO story_episode
@@ -42,12 +41,12 @@ const getEpisodes = async (req, res, next) => {
 
         const { pool } = getPool();
 
-        let query = `SELECT story_episode.*, story.*, master_status.* 
-                     FROM story_episode 
-                     JOIN story ON story.id = story_episode.story_id 
-                     JOIN master_status ON master_status.id = story_episode.status_id 
-                     WHERE 1 = 1
-                     `;
+        let query = `
+                    SELECT se.*, st.name as story, ms.name as status
+                    FROM story_episode se
+                    INNER JOIN story st ON st.id = se.story_id
+                    INNER JOIN master_status ms ON ms.id = se.status_id
+                    WHERE 1 = 1`;
 
         const filterKeys = Object.keys(req.params);
         if (filterKeys.length > 0) {
@@ -56,7 +55,7 @@ const getEpisodes = async (req, res, next) => {
             });
         };
         const [result] = await pool.query(query);
-        if (result.length === 0) return res.status(404).json({ message: 'Episode not found', error: error, status: 404 });
+        if (result.length === 0) return res.status(404).json({ message: 'Episode not found', status: 404 });
         res.status(200).json({ data: result, message: 'Success', status: 200 });
     } catch (error) {
         console.log(error);
