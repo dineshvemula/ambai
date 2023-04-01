@@ -24,7 +24,7 @@ const createEpisode = async (req, res, next) => {
         // creating new episode
         const query = `INSERT INTO story_episode
                        (story_id, episode_no, name, title, logo, banner, content_tamil, content_english, content_telugu, content_kannada, content_malayalam, status_id,last_updated_by,last_updated_on)
-                       VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?.NOW())`;
+                       VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,NOW())`;
         const values = [story_id, episode_no, name, title, logo, banner, content_tamil, content_english, content_telugu, content_kannada, content_malayalam, status_id, created_by]
         await pool.query(query, values);
         res.status(201).json({ message: 'Episode created', status: 200 });
