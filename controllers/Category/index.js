@@ -43,13 +43,15 @@ const getAllMasterCategories = async (req, res, next) => {
     try {
         const { pool } = getPool();
         const query = `
-    SELECT mc.name, mc.banner_img, ms.name as status
+    SELECT mc.*, ms.name as status, ur.fName as created_by, ur.fName as last_updated_by
     FROM master_category mc
     INNER JOIN master_status ms
     ON ms.id = mc.status_id
+    INNER JOIN users ur
+    ON ur.id = mc.created_by AND mc.last_updated_by
     `;
         const [result] = await pool.query(query);
-        res.status(200).json({ data: result });
+        res.status(200).json({ result: result, message: 'success', status: 200 });
     } catch (error) {
         next(error)
     }
@@ -65,7 +67,7 @@ const getMasterCategoryById = async (req, res, next) => {
         const { id } = req.params;
         // retrieve category details by id
         const query = `
-          SELECT mc.name, mc.banner_img, ms.name as msStatus
+          SELECT mc.*, ms.name as msStatus
           FROM master_category mc
           INNER JOIN master_status ms
           ON ms.id = mc.status_id where mc.id = ?
@@ -75,7 +77,7 @@ const getMasterCategoryById = async (req, res, next) => {
         if (result.length === 0) {
             return res.status(404).json({ message: 'Category not found' });
         }
-        res.status(200).json({ data: result[0] });
+        res.status(200).json({ result: result[0], message: 'success', status: 200 });
     } catch (error) {
         next(error)
     }
