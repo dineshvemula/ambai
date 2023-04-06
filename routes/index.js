@@ -13,6 +13,6 @@ module.exports = (app) => {
     app.use('/api/v1/story-episode', storyEpisodeRouter);
     app.use('/api/v1/story-details', storyDetailsRouter);
     app.use('/api/v1/category', categoryRouter);
-    app.use('/api/v1/tag', tagRouter);
+    app.use('/api/v1/tags', tagRouter);
     app.use('/api/v1/auth', authRouter);
 };

@@ -1,10 +1,11 @@
 const { getPool } = require("../../config/db");
-
+const { uploadImage } = require("../../services/image-upload");
 // create new category
 const createMasterCategory = async (req, res, next) => {
     try {
         const { pool } = getPool();
-        const { name, status_id, banner_img } = req.body;
+        const { name } = req.body;
+        const status_id = 1;
         const user_id = req?.user?.id;
 
         // perform input validation here
@@ -18,6 +19,10 @@ const createMasterCategory = async (req, res, next) => {
         const [result] = await pool.query(checkQuery, checkValues);
         if (result[0].count > 0) return res.status(400).json({ message: 'Category with given name already exists' });
 
+        let banner_img = ''
+        if (req.file?.originalname) {
+            banner_img = await uploadImage(req.file, 'category');
+        }
         // create new category
         const query = `
         INSERT INTO master_category (
@@ -43,7 +48,7 @@ const getAllMasterCategories = async (req, res, next) => {
     try {
         const { pool } = getPool();
         const query = `
-    SELECT mc.*, ms.name as status, ur.fName as created_by, ur.fName as last_updated_by
+    SELECT mc.name,mc.banner_img, ms.name as status, ur.fName as created_by, ur.fName as last_updated_by
     FROM master_category mc
     INNER JOIN master_status ms
     ON ms.id = mc.status_id

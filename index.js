@@ -10,6 +10,8 @@ const morgan = require("morgan");
 app.use(morgan("tiny"));
 app.use(express.json());
 app.use(cors());
+app.use("/static", express.static("uploads"));
+
 require('./routes/index')(app);
 app.use((error, req, res, next) => {
   console.log(error);

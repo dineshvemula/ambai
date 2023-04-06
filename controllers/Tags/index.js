@@ -1,10 +1,12 @@
 const { getPool } = require("../../config/db");
+const { uploadImage } = require("../../services/image-upload");
 
 // create new tag
 const createMasterTag = async (req, res, next) => {
     try {
         const { pool } = getPool();
-        const { name, status_id, banner_img } = req.body;
+        const { name } = req.body;
+        const status_id = 1;
         const user_id = req.user.id;
         // perform input validation here
         const checkQuery = `
@@ -17,6 +19,12 @@ const createMasterTag = async (req, res, next) => {
         const [result] = await pool.query(checkQuery, checkValues);
         if (result[0].count > 0) return res.status(400).json({ message: 'Tag with given name already exists' });
 
+        // extracting image file if exist
+        let banner_img_url = '';
+        if (req.file?.originalname) {
+            banner_img_url = await uploadImage(req.file, 'tags');
+        }
+
         // create new tag
         const query = `
         INSERT INTO master_tag (
@@ -27,7 +35,7 @@ const createMasterTag = async (req, res, next) => {
         )
 
       `;
-        const values = [name, status_id, banner_img, user_id, user_id];
+        const values = [name, status_id, banner_img_url, user_id, user_id];
         await pool.query(query, values);
         res.status(200).json({ message: 'Created' });
     } catch (error) {
@@ -48,7 +56,7 @@ const getAllMasterTag = async (req, res, next) => {
     ON ms.id = mt.status_id
     `;
         const [result] = await pool.query(query);
-        res.status(200).json({ data: result, message: 'success', status: 200 });
+        res.status(200).json({ result: result, message: 'success', status: 200 });
     } catch (error) {
         next(error)
     }
@@ -74,7 +82,7 @@ const getMasterTagById = async (req, res, next) => {
         if (result.length === 0) {
             return res.status(404).json({ message: 'Tag not found' });
         }
-        res.status(200).json({ data: result[0] });
+        res.status(200).json({ result: result[0] });
     } catch (error) {
         next(error)
     }
